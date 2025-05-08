@@ -1,3 +1,7 @@
+issues
+
+- create a backend end point for using of get the latest bdays (aorun) & one for today if any
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
