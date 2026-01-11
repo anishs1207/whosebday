@@ -40,7 +40,17 @@ datasource db {
 //   createdAt DateTime   @default(now())
 //   updatedAt DateTime   @updatedAt
 //   bdays     Birthday[]
+//   tier     Tier
+// paymentDetails String
 // }
+
+// enum Tier {
+//   Free
+//   Pro
+//   Premium
+// }
+
+//add user over here => then add tier: "free" or "premium"
 
 model Birthday {
   id     String @id @default(uuid())
@@ -49,6 +59,7 @@ model Birthday {
   name   String
   title  String
   userId String
+  // User   User   @relation(fields: [userId], references: [id])
 }
 
 // model DummyModel {
