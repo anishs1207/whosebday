@@ -3,7 +3,7 @@ import { Gift, Bell, Users } from "lucide-react";
 export default function Features() {
   return (
     <section className="py-16 bg-gray-900">
-      <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center mb-10">Main Features</h2>
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">Main Features</h2>
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         <div className="grid lg:grid-cols-3 gap-8">

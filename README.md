@@ -1,6 +1,7 @@
 # Whosebday:
 
 - WebApp used to keep track of your important events like bdays, anniversaries & other special occasions
+- Check it out at: https://whosebday-prod.vercel.app/
 - Tech Stack:
 
 1. Nextjs Full Stack (React Frontend + Nodejs Backend)
