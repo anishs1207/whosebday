@@ -15,43 +15,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// app/actions.ts
-// "use server";
-// import { neon } from "@neondatabase/serverless";
-
-// export async function getData() {
-//     const sql = neon(process.env.DATABASE_URL);
-//     const data = await sql`...`;
-//     return data;
-// }
-
-//us: npx prisma migrate dev to migrate the db to cretae the tables (every time you chgange model you have to migrate the dDV)
-
-// how to use prism: npm i prisma & npx prisma init which creates a folder prisma with the schema.prisma overe here
-// then migrate the DB which runs the mative sql queries for it
-
-//Now we can define the schemas for the model over here:
-//should use local db right now by spinning up a container on docker (docker run --) but right now using neondb 
-// https://console.neon.tech/
-
-// model User {
-//   id        String     @id @default(uuid())
-//   email     String     @unique
-//   createdAt DateTime   @default(now())
-//   updatedAt DateTime   @updatedAt
-//   bdays     Birthday[]
-//   tier     Tier
-// paymentDetails String
-// }
-
-// enum Tier {
-//   Free
-//   Pro
-//   Premium
-// }
-
-//add user over here => then add tier: "free" or "premium"
-
 model Birthday {
   id     String @id @default(uuid())
   day    Int
@@ -59,35 +22,4 @@ model Birthday {
   name   String
   title  String
   userId String
-  // User   User   @relation(fields: [userId], references: [id])
 }
-
-// model DummyModel {
-//   id          String   @id @default(uuid())                // Primary key with UUID
-//   name        String   @unique                            // Unique field
-//   email       String   @unique                            // Unique constraint
-//   createdAt   DateTime @default(now())                    // Auto timestamp
-//   updatedAt   DateTime @updatedAt                         // Auto update on change
-//   isActive    Boolean  @default(true)                     // Default boolean
-//   age         Int?                                         // Optional field
-//   description String?  @default("No description")          // Optional with default
-//   price       Float                                        // Float field
-//   tags        String[]                                     // Array of strings
-//   role        Role     @default(User)                     // Enum usage
-//   otherId     String                                       
-//   other       OtherModel @relation(fields: [otherId], references: [id]) // Relation
-
-//   @@index([email, name])                                  // Composite index
-//   @@map("dummy_table")                                    // Map to custom table name
-// }
-
-// enum Role {
-//   Admin
-//   User
-//   Guest
-// }
-
-// model OtherModel {
-//   id   String @id @default(uuid())
-//   name String
-// }
