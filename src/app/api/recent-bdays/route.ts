@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { getOrSetCache } from "@/lib/redis";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -17,44 +18,45 @@ export async function GET(req: Request) {
     const currentMonth = currentDate.getMonth() + 1;
     const currentDay = currentDate.getDate();
 
-    const upcomingBirthdays = await prisma.birthday.findMany({
-      where: {
-        userId: userId,
-        OR: [
-          { month: { gt: currentMonth } },
-          { month: currentMonth, day: { gte: currentDay } },
-        ],
-      },
-      orderBy: [{ month: "asc" }, { day: "asc" }],
-      take: 9,
-    });
+    const cacheKey = `recent-bdays:${userId}:${currentMonth}:${currentDay}`;
 
-    if (upcomingBirthdays.length < 9) {
-      const remainingCount = 9 - upcomingBirthdays.length;
-
-      const pastBirthdays = await prisma.birthday.findMany({
+    const data = await getOrSetCache(cacheKey, async () => {
+      const upcomingBirthdays = await prisma.birthday.findMany({
         where: {
           userId: userId,
           OR: [
-            { month: { lt: currentMonth } },
-            { month: currentMonth, day: { lt: currentDay } },
+            { month: { gt: currentMonth } },
+            { month: currentMonth, day: { gte: currentDay } },
           ],
         },
         orderBy: [{ month: "asc" }, { day: "asc" }],
-        take: remainingCount,
+        take: 9,
       });
 
-      const allBirthdays = [...upcomingBirthdays, ...pastBirthdays];
+      if (upcomingBirthdays.length < 9) {
+        const remainingCount = 9 - upcomingBirthdays.length;
 
-      return Response.json({
-        success: true,
-        data: allBirthdays,
-      });
-    }
+        const pastBirthdays = await prisma.birthday.findMany({
+          where: {
+            userId: userId,
+            OR: [
+              { month: { lt: currentMonth } },
+              { month: currentMonth, day: { lt: currentDay } },
+            ],
+          },
+          orderBy: [{ month: "asc" }, { day: "asc" }],
+          take: remainingCount,
+        });
+
+        return [...upcomingBirthdays, ...pastBirthdays];
+      }
+
+      return upcomingBirthdays;
+    }, 3600); // 1 hour
 
     return Response.json({
       success: true,
-      data: upcomingBirthdays,
+      data: data,
     });
   } catch (error) {
     console.error("Db Error : /api/recent-bdays", error);

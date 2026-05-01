@@ -1,8 +1,8 @@
 import prisma from "@/lib/db";
+import { getOrSetCache } from "@/lib/redis";
 
 export async function GET(req: Request) {
-  //done
-
+  
   try {
     const url = new URL(req.url);
     const userId = url.searchParams.get("userId");
@@ -18,12 +18,16 @@ export async function GET(req: Request) {
       });
     }
 
-    const bdaysOfSpecifiedMonth = await prisma.birthday.findMany({
-      where: {
-        userId,
-        month: parseInt(month, 10),
-      },
-    });
+    const cacheKey = `bdays-month:${userId}:${month}`;
+
+    const bdaysOfSpecifiedMonth = await getOrSetCache(cacheKey, async () => {
+      return prisma.birthday.findMany({
+        where: {
+          userId,
+          month: parseInt(month, 10),
+        },
+      });
+    }, 3600); // 1 hour
 
     if (!bdaysOfSpecifiedMonth || bdaysOfSpecifiedMonth.length == 0) {
       return Response.json({

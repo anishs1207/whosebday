@@ -1,9 +1,9 @@
 import prisma from "@/lib/db"
+import { redis } from "@/lib/redis"
 
 export async function DELETE(req: Request) {
   const url = new URL(req.url)
   const id = url.searchParams.get("id")
-  console.log (id)
 
   if (!id) {
     return Response.json({ message: "ID is required" }, { status: 400 })
@@ -13,6 +13,15 @@ export async function DELETE(req: Request) {
     const deleted = await prisma.birthday.delete({
       where: { id },
     })
+
+    // Invalidate caches
+    try {
+      const { invalidateUserCache, invalidateMonthlyCache } = await import("@/lib/redis");
+      await invalidateUserCache(deleted.userId);
+      await invalidateMonthlyCache(deleted.userId, deleted.month);
+    } catch (cacheErr) {
+      console.error("Cache invalidation error:", cacheErr);
+    }
 
     return Response.json({ message: "Birthday deleted", deleted })
   } catch (error) {

@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { getOrSetCache } from "@/lib/redis";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -11,14 +12,18 @@ export async function GET(req: Request) {
   try {
     const whereClause: any = {};
     if (name) whereClause.name = name;
-    if (month) whereClause.month = month;
-    if (day) whereClause.day = day;
+    if (month) whereClause.month = parseInt(month, 10);
+    if (day) whereClause.day = parseInt(day, 10);
     if (title) whereClause.title = title;
     if (userId) whereClause.userId = userId;
 
-    const filteredBdays = await prisma.birthday.findMany({
-      where: whereClause,
-    });
+    const cacheKey = `filter-bday:${userId || 'global'}:${name || 'any'}:${month || 'any'}:${day || 'any'}:${title || 'any'}`;
+
+    const filteredBdays = await getOrSetCache(cacheKey, async () => {
+      return prisma.birthday.findMany({
+        where: whereClause,
+      });
+    }, 600); // 10 minutes cache
 
     if (!filteredBdays || filteredBdays.length == 0) {
       return Response.json({

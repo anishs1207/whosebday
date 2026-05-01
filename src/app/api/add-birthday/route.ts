@@ -32,6 +32,15 @@ export async function POST(req: Request) {
       });
     }
 
+    // Invalidate caches
+    try {
+      const { invalidateUserCache, invalidateMonthlyCache } = await import("@/lib/redis");
+      await invalidateUserCache(userId);
+      await invalidateMonthlyCache(userId, month);
+    } catch (cacheErr) {
+      console.error("Cache invalidation error:", cacheErr);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Birthday added successfully",
