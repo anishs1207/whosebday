@@ -123,7 +123,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Anish\\Documents\\Anish-Coding\\coding_notes\\webd_devops_notes\\04-building\\00-Deployed\\05-whosebday\\src\\generated\\prisma",
+      "value": "C:\\Users\\Anish\\Documents\\building\\00-Deployed\\05-whosebday\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -137,7 +137,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Anish\\Documents\\Anish-Coding\\coding_notes\\webd_devops_notes\\04-building\\00-Deployed\\05-whosebday\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Anish\\Documents\\building\\00-Deployed\\05-whosebday\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -160,8 +160,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//refer docs: https://www.prisma.io/docs\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// app/actions.ts\n// \"use server\";\n// import { neon } from \"@neondatabase/serverless\";\n\n// export async function getData() {\n//     const sql = neon(process.env.DATABASE_URL);\n//     const data = await sql`...`;\n//     return data;\n// }\n\n//us: npx prisma migrate dev to migrate the db to cretae the tables (every time you chgange model you have to migrate the dDV)\n\n// how to use prism: npm i prisma & npx prisma init which creates a folder prisma with the schema.prisma overe here\n// then migrate the DB which runs the mative sql queries for it\n\n//Now we can define the schemas for the model over here:\n//should use local db right now by spinning up a container on docker (docker run --) but right now using neondb \n// https://console.neon.tech/\n\n// model User {\n//   id        String     @id @default(uuid())\n//   email     String     @unique\n//   createdAt DateTime   @default(now())\n//   updatedAt DateTime   @updatedAt\n//   bdays     Birthday[]\n//   tier     Tier\n// paymentDetails String\n// }\n\n// enum Tier {\n//   Free\n//   Pro\n//   Premium\n// }\n\n//add user over here => then add tier: \"free\" or \"premium\"\n\nmodel Birthday {\n  id     String @id @default(uuid())\n  day    Int\n  month  Int\n  name   String\n  title  String\n  userId String\n  // User   User   @relation(fields: [userId], references: [id])\n}\n\n// model DummyModel {\n//   id          String   @id @default(uuid())                // Primary key with UUID\n//   name        String   @unique                            // Unique field\n//   email       String   @unique                            // Unique constraint\n//   createdAt   DateTime @default(now())                    // Auto timestamp\n//   updatedAt   DateTime @updatedAt                         // Auto update on change\n//   isActive    Boolean  @default(true)                     // Default boolean\n//   age         Int?                                         // Optional field\n//   description String?  @default(\"No description\")          // Optional with default\n//   price       Float                                        // Float field\n//   tags        String[]                                     // Array of strings\n//   role        Role     @default(User)                     // Enum usage\n//   otherId     String                                       \n//   other       OtherModel @relation(fields: [otherId], references: [id]) // Relation\n\n//   @@index([email, name])                                  // Composite index\n//   @@map(\"dummy_table\")                                    // Map to custom table name\n// }\n\n// enum Role {\n//   Admin\n//   User\n//   Guest\n// }\n\n// model OtherModel {\n//   id   String @id @default(uuid())\n//   name String\n// }\n",
-  "inlineSchemaHash": "5c7c27a055f490a13416f396acb402d34c70c2015f3d992f93b4e0dc75916637",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//refer docs: https://www.prisma.io/docs\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Birthday {\n  id     String @id @default(uuid())\n  day    Int\n  month  Int\n  name   String\n  title  String\n  userId String\n}\n",
+  "inlineSchemaHash": "1c7b209e436b5c058d411413a59f085404a8e4d6bb72aa98eedec43936c6be3d",
   "copyEngine": true
 }
 config.dirname = '/'

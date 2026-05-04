@@ -1,0 +1,43 @@
+version: "3"
+
+tasks:
+  up:
+    desc: Start all containers in detached mode
+    cmds:
+      - docker compose up -d
+
+  down:
+    desc: Stop and remove all containers
+    cmds:
+      - docker compose down
+
+  restart:
+    desc: Restart all containers
+    cmds:
+      - task: down
+      - task: up
+
+  logs:
+    desc: View logs for all containers
+    cmds:
+      - docker compose logs -f
+
+  build:
+    desc: Build or rebuild services
+    cmds:
+      - docker compose build
+
+  ps:
+    desc: List running containers
+    cmds:
+      - docker compose ps
+
+  shell:
+    desc: Open a shell in the app container
+    cmds:
+      - docker compose exec app sh
+
+  clean:
+    desc: Remove unused data
+    cmds:
+      - docker system prune -af

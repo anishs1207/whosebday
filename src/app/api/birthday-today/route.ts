@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+export const dynamic = "force-dynamic";
 import { getOrSetCache } from "@/lib/redis";
 
 export async function GET(req: Request) {

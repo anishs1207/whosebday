@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
   apiVersion: "2025-04-30.basil",
 });
 
@@ -45,8 +46,9 @@ export async function POST(req: NextRequest) {
     // });
 
     return NextResponse.json({ id: session.id });
-  } catch (err: any) {
-    console.error("Checkout Session Error:", err.message);
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error("Checkout Session Error:", error.message);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

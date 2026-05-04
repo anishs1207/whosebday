@@ -47,5 +47,4 @@ next-env.d.ts
 .vercel
 
 # md files
-TODO.md
-REDIS.md
+/notes

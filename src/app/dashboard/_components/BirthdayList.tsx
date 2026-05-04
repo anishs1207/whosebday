@@ -5,9 +5,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Cake } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
 import { toast } from "react-hot-toast"
+import { Birthday } from "@/types"
 
 export default function BirthdayList() {
-    const [birthdays, setBirthdays] = useState<any[]>([])
+    const [birthdays, setBirthdays] = useState<Birthday[]>([])
     const [loading, setLoading] = useState(true)
     const { user } = useUser()
 
@@ -19,7 +20,7 @@ export default function BirthdayList() {
         return months[month - 1]
     }
 
-    const getAge = (year: number) => {
+    const getAge = (year: number | null | undefined) => {
         if (!year) return null
         const currentYear = new Date().getFullYear()
         return currentYear - year
@@ -62,7 +63,7 @@ export default function BirthdayList() {
                 <div className="text-center py-8 text-muted-foreground">No birthdays found</div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {birthdays.map((birthday: any) => (
+                    {birthdays.map((birthday: Birthday) => (
                         <Card key={birthday.id} className="overflow-hidden">
                             <CardContent className="p-0">
                                 <div className="flex items-start">

@@ -1,18 +1,19 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
 import { useUser } from "@clerk/nextjs"
+import { Birthday } from "@/types"
 
 const CURRENT_YEAR = new Date().getFullYear()
 
 export default function CalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date())
-    const [birthdaysByMonth, setBirthdaysByMonth] = useState<{ [key: number]: any[] }>({})
+    const [birthdaysByMonth, setBirthdaysByMonth] = useState<{ [key: number]: Birthday[] }>({})
     const [loading, setLoading] = useState(false)
-    const [selectedDayEvents, setSelectedDayEvents] = useState<any[] | null>(null) // New: selected day events
+    const [selectedDayEvents, setSelectedDayEvents] = useState<Birthday[] | null>(null) // New: selected day events
     const [selectedDay, setSelectedDay] = useState<number | null>(null) // To know which day is selected
     const fetchedMonths = useRef<Set<number>>(new Set())
     const { user } = useUser()
@@ -28,13 +29,13 @@ export default function CalendarView() {
         "July", "August", "September", "October", "November", "December"
     ]
 
-    const getBdays = async (month: number) => {
+    const getBdays = useCallback(async (month: number) => {
         if (fetchedMonths.current.has(month)) return
 
         try {
             setLoading(true)
             interface ApiResponse {
-                data: { id: string; name: string; title: string; day: number }[]
+                data: Birthday[]
             }
 
             const response = await axios.get<ApiResponse>(`/api/bdays-current-month?userId=${user?.id}&month=${month}`)
@@ -50,7 +51,7 @@ export default function CalendarView() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [user?.id])
 
     useEffect(() => {
         if (currentYear === CURRENT_YEAR) {
@@ -76,7 +77,7 @@ export default function CalendarView() {
 
     const getBirthdaysForDay = (day: number) => {
         const monthData = birthdaysByMonth[currentMonth + 1] || []
-        return monthData.filter((b: any) => b.day === day)
+        return monthData.filter((b: Birthday) => b.day === day)
     }
 
     const calendarDays = []
@@ -148,7 +149,7 @@ export default function CalendarView() {
                                     <>
                                         <div className={`text-right p-1 ${isToday ? "font-bold text-primary" : ""}`}>{day}</div>
                                         <div className="mt-1">
-                                            {birthdays.map((b: any) => (
+                                            {birthdays.map((b: Birthday) => (
                                                 <div
                                                     key={b.id}
                                                     className="text-xs p-1 mb-1 bg-primary/10 rounded truncate"

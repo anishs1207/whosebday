@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -47,7 +47,7 @@ export default function SearchBirthdays() {
     const [isDeleting, setIsDeleting] = useState(false)
     const [loading, setLoading] = useState(false) // Loader state
 
-    const fetchBirthdays = async (page = 1) => {
+    const fetchBirthdays = useCallback(async (page = 1) => {
         setLoading(true)
         const params = new URLSearchParams()
         if (searchTerm) params.append("searchTerm", searchTerm)
@@ -61,12 +61,15 @@ export default function SearchBirthdays() {
             const data = await res.json()
             setBirthdays(data.data || [])
             setTotalPages(data.meta?.totalPages || 1)
-        } catch (err: any) {
-            toast.error("Failed to fetch birthdays", err)
+        } catch (err: unknown) {
+            const error = err as Error;
+            toast.error("Failed to fetch birthdays", { description: error.message })
         } finally {
             setLoading(false)
         }
-    }
+    }, [searchTerm, selectedMonth, selectedDay, user?.id])
+
+    const fetchBirthdaysCallback = fetchBirthdays
 
     const deleteBirthday = async () => {
         if (deleteId) {
@@ -89,8 +92,8 @@ export default function SearchBirthdays() {
     }
 
     useEffect(() => {
-        fetchBirthdays(page)
-    }, [page])
+        fetchBirthdaysCallback(page)
+    }, [page, fetchBirthdaysCallback])
 
     const handleSearch = () => {
         setPage(1)
@@ -112,7 +115,7 @@ export default function SearchBirthdays() {
         ][month - 1]
     }
 
-    const getAge = (year?: number) => {
+    const getAge = (year: number | null | undefined) => {
         if (!year) return null
         return new Date().getFullYear() - year
     }

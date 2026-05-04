@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { Prisma } from "@/generated/prisma";
 import { getOrSetCache } from "@/lib/redis";
 
 export async function GET(req: Request) {
@@ -10,7 +11,7 @@ export async function GET(req: Request) {
   const userId = url.searchParams.get("userId");
 
   try {
-    const whereClause: any = {};
+    const whereClause: Prisma.BirthdayWhereInput = {};
     if (name) whereClause.name = name;
     if (month) whereClause.month = parseInt(month, 10);
     if (day) whereClause.day = parseInt(day, 10);

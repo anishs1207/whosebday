@@ -1,5 +1,4 @@
 import prisma from "@/lib/db"
-import { redis } from "@/lib/redis"
 
 export async function DELETE(req: Request) {
   const url = new URL(req.url)

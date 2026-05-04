@@ -9,6 +9,7 @@ import PricingCards from "./PlanPricing";
 import SideNav from "./SideNav";
 import AddBirthdayForm from "./AddBdayForm";
 import UserPlanCard from "./UserPlan";
+import { BirthdayInput } from "@/types";
 
 
 const initialBirthdays = [
@@ -28,12 +29,12 @@ const initialBirthdays = [
 
 export function DashboardView() {
 
-    const [birthdays, setBirthdays] = useState(initialBirthdays)
-    const [, setFilteredBirthdays] = useState(initialBirthdays)
+    const [birthdays, setBirthdays] = useState<(BirthdayInput & { id: number })[]>(initialBirthdays)
+    const [, setFilteredBirthdays] = useState<(BirthdayInput & { id: number })[]>(initialBirthdays)
     const [activeTab, setActiveTab] = useState("dashboard")
     const [sidebarOpen, setSidebarOpen] = useState(true)
 
-    const addBirthday = (newBirthday: any) => {
+    const addBirthday = (newBirthday: BirthdayInput) => {
         const updatedBirthdays = [...birthdays, { ...newBirthday, id: birthdays.length + 1 }]
         setBirthdays(updatedBirthdays)
         setFilteredBirthdays(updatedBirthdays)

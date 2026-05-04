@@ -15,8 +15,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
+import { BirthdayInput } from "@/types";
 
-export default function AddBirthdayForm({ onAddBirthday }: any) {
+export default function AddBirthdayForm({ onAddBirthday }: { onAddBirthday: (birthday: BirthdayInput) => void }) {
     const { user } = useUser();
     const [formData, setFormData] = useState({
         name: "",
@@ -34,7 +35,7 @@ export default function AddBirthdayForm({ onAddBirthday }: any) {
         }
     }, [user]);
 
-    const AddBday = async (newBirthday: any) => {
+    const AddBday = async (newBirthday: BirthdayInput & { userId?: string }) => {
         try {
             setLoading(true);
             await axios.post("/api/add-birthday", newBirthday);
@@ -54,16 +55,16 @@ export default function AddBirthdayForm({ onAddBirthday }: any) {
         }
     };
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSelectChange = (name: any, value: any) => {
+    const handleSelectChange = (name: string, value: string) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formData.name || !formData.day || !formData.month) {

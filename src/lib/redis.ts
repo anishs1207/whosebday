@@ -1,4 +1,5 @@
 import { createClient } from 'redis';
+// import { cacheHitsCounter, cacheMissesCounter } from '@/lib/metrics';
 
 const globalForRedis = global as unknown as { redisClient: ReturnType<typeof createClient> };
 
@@ -23,9 +24,16 @@ if (process.env.NODE_ENV !== 'production') globalForRedis.redisClient = redis;
 redis.on('error', (err) => console.error('Redis Client Error:', err));
 redis.on('connect', () => console.log('Redis Client Connected'));
 
-// Auto-connect
-if (!redis.isOpen) {
-  redis.connect().catch(console.error);
+// removed top-level auto-connect to prevent build issues
+
+async function ensureConnected() {
+  if (!redis.isOpen) {
+    try {
+      await redis.connect();
+    } catch (err) {
+      console.error("Failed to connect to Redis:", err);
+    }
+  }
 }
 
 const DEFAULT_TTL = 3600; // 1 hour
@@ -39,13 +47,16 @@ export async function getOrSetCache<T>(
   fetcher: () => Promise<T>,
   expirationInSeconds: number = DEFAULT_TTL
 ): Promise<T> {
+  await ensureConnected();
   // 1. Try to get from cache
   if (redis.isOpen) {
     try {
       const cachedData = await redis.get(key);
       if (cachedData) {
+        cacheHitsCounter.inc({ cache_type: 'redis' });
         return JSON.parse(cachedData) as T;
       }
+      cacheMissesCounter.inc({ cache_type: 'redis' });
     } catch (error) {
       console.error(`[Redis] Get error for key "${key}":`, error);
     }
@@ -71,6 +82,7 @@ export async function getOrSetCache<T>(
  * Clears all cache keys related to a specific user and global today view.
  */
 export async function invalidateUserCache(userId: string) {
+  await ensureConnected();
   if (!redis.isOpen) return;
 
   const today = new Date();
@@ -100,6 +112,7 @@ export async function invalidateUserCache(userId: string) {
  * invalidateMonthlyCache
  */
 export async function invalidateMonthlyCache(userId: string, month: number | string) {
+  await ensureConnected();
   if (!redis.isOpen) return;
   try {
     await redis.del(`bdays-month:${userId}:${month}`);
