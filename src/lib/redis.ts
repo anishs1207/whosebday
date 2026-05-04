@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-// import { cacheHitsCounter, cacheMissesCounter } from '@/lib/metrics';
+import { cacheHitsCounter, cacheMissesCounter } from '@/lib/metrics';
 
 const globalForRedis = global as unknown as { redisClient: ReturnType<typeof createClient> };
 

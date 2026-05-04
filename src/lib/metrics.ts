@@ -103,7 +103,8 @@ const metrics = [
 
 metrics.forEach(m => {
   try {
-    register.registerMetric(m)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    register.registerMetric(m as any)
   } catch {
     // During hot-reloading, metrics might already be registered
     // We catch the error to prevent the app from crashing
